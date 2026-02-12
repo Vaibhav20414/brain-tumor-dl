@@ -1,0 +1,1 @@
+“The dataset provides predefined training and testing splits, which are used as-is. However, since the dataset consists of multiple MRI slices per individual and patient identifiers are not available, there is a potential risk of slice-level data leakage. This limitation is acknowledged and reflected in the interpretation of results.”
