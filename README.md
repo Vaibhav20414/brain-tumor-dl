@@ -18,50 +18,7 @@ Structured evaluation with confusion matrix & error analysis
 
 The goal is to simulate a production-style ML project structure, not just a notebook experiment.
 
-🏗️ Project Architecture
-brain-mri-cnn/
-│
-├── data/
-│   ├── raw/                # Original MRI dataset (ignored by git)
-│   └── processed/          # Preprocessed tensors/images
-│
-├── src/
-│   ├── data/
-│   │   ├── dataset.py      # PyTorch Dataset class
-│   │   └── transforms.py   # Augmentation & preprocessing
-│   │
-│   ├── models/
-│   │   ├── backbone.py         # Shared CNN feature extractor
-│   │   ├── classification_head.py
-│   │   ├── detection_head.py
-│   │   └── multitask_model.py  # Combined architecture
-│   │
-│   ├── training/
-│   │   ├── train.py
-│   │   ├── loss.py
-│   │   └── metrics.py
-│   │
-│   ├── evaluation/
-│   │   ├── evaluate.py
-│   │   ├── confusion_matrix.py
-│   │   └── error_analysis.py
-│   │
-│   ├── utils/
-│   │   ├── config.py
-│   │   └── logger.py
-│
-├── experiments/
-│   ├── exp_01_baseline/
-│   └── exp_02_multitask/
-│
-├── models/                 # Saved weights (ignored by git)
-├── notes/
-│   ├── data_inspection.md
-│   └── modeling_strategy.md
-│
-├── PROJECT_CHARTER.md
-├── requirements.txt
-└── README.md
+
 
 🧠 Model Design
 1️⃣ Backbone
