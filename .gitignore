@@ -62,3 +62,16 @@ Thumbs.db
 # ================================
 .vscode/
 .idea/
+
+# ================================
+# Project tooling internals
+# ================================
+CLAUDE.md
+CODE.zip
+
+# ================================
+# Model outputs (large files)
+# ================================
+outputs/checkpoints/
+outputs/plots/
+outputs/reports/

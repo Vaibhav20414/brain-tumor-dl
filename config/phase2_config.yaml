@@ -1,0 +1,29 @@
+phase: 2
+task: classification
+num_classes: 4
+class_names: [glioma, meningioma, no_tumor, pituitary]
+data:
+  root: data/processed
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+model:
+  backbone: cnn
+  pretrained_phase1: outputs/checkpoints/phase1/phase1_best.pth
+  freeze_backbone: false
+  dropout: 0.5
+training:
+  epochs: 40
+  lr: 0.0005
+  optimizer: adam
+  scheduler: cosine
+  early_stopping_patience: 10
+  label_smoothing: 0.1
+multitask:
+  enabled: false
+  alpha: 0.5             # weight for detection loss
+  beta: 0.5              # weight for classification loss
+output:
+  checkpoint_dir: outputs/checkpoints/phase2
+  plot_dir: outputs/plots/phase2
+  report_dir: outputs/reports/phase2

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brain Tumor Detection — AI Diagnostic Tool</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 20 Q14 14 20 13 Q26 14 28 20 Q26 27 20 27 Q14 27 12 20Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M20 13 L20 7M20 27 L20 33M12 20 L6 20M28 20 L34 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="20" cy="20" r="3" fill="currentColor"/>
+        </svg>
+        <span class="logo-text">NeuroScan <span class="logo-ai">AI</span></span>
+      </div>
+      <div class="header-meta">
+        <div id="model-status-badge" class="status-badge status-loading">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking models…</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="main">
+
+    <!-- Left panel: Upload -->
+    <section class="panel panel-upload">
+      <h2 class="panel-title">Upload MRI Scan</h2>
+      <p class="panel-sub">Axial or coronal T1/T2-weighted brain MRI. JPEG or PNG.</p>
+
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone-inner" id="drop-inner">
+          <svg class="upload-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M32 28 L32 44M24 36 L32 28 L40 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 16 L22 12 Q22 8 26 8 L38 8 Q42 8 42 12 L42 16" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p class="drop-label">Drag &amp; drop image here</p>
+          <p class="drop-sub">or</p>
+          <label for="file-input" class="btn btn-outline">Browse File</label>
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+
+        <!-- Preview state -->
+        <div class="preview-state" id="preview-state" style="display:none">
+          <img id="preview-img" class="preview-img" src="" alt="MRI Preview" />
+          <div class="preview-overlay">
+            <span class="preview-name" id="preview-name"></span>
+            <button class="btn-icon" id="clear-btn" title="Remove image">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button id="analyze-btn" class="btn btn-primary" disabled>
+        <span class="btn-text">Analyze Scan</span>
+        <span class="btn-spinner" style="display:none">
+          <svg class="spinner" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="60" stroke-dashoffset="20"/></svg>
+          Analyzing…
+        </span>
+      </button>
+
+      <p class="disclaimer">
+        For research and educational purposes only. Not a substitute for clinical diagnosis.
+      </p>
+    </section>
+
+    <!-- Right panel: Results -->
+    <section class="panel panel-results" id="results-panel">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state">
+        <svg class="empty-icon" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/>
+          <path d="M28 40 Q32 30 40 28 Q48 30 52 40 Q48 52 40 52 Q32 52 28 40Z" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <circle cx="40" cy="40" r="4" fill="currentColor" opacity="0.3"/>
+        </svg>
+        <p>Upload an MRI scan and click <strong>Analyze Scan</strong> to see results.</p>
+      </div>
+
+      <!-- Results content -->
+      <div class="results-content" id="results-content" style="display:none">
+
+        <!-- Presence verdict -->
+        <div class="verdict-card" id="verdict-card">
+          <div class="verdict-icon-wrap" id="verdict-icon-wrap">
+            <!-- filled by JS -->
+          </div>
+          <div class="verdict-text">
+            <div class="verdict-label" id="verdict-label">—</div>
+            <div class="verdict-confidence" id="verdict-confidence">—</div>
+          </div>
+          <div class="verdict-ring">
+            <svg class="ring-svg" viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="42"/>
+              <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"
+                stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+            </svg>
+            <span class="ring-value" id="ring-value">0%</span>
+          </div>
+        </div>
+
+        <!-- Tumor type (Phase 2) -->
+        <div class="type-section" id="type-section">
+          <h3 class="section-title">Tumor Classification</h3>
+          <div class="type-header" id="type-header">
+            <span class="type-badge" id="type-badge">—</span>
+            <span class="type-conf" id="type-conf">—</span>
+          </div>
+
+          <div class="prob-bars" id="prob-bars">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Not available notice (shown if only one phase loaded) -->
+        <div class="notice" id="phase-notice" style="display:none"></div>
+
+      </div>
+
+      <!-- Error state -->
+      <div class="error-state" id="error-state" style="display:none">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p id="error-message">Something went wrong.</p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Model status modal hint (shown once on load if models not ready) -->
+  <div class="toast" id="status-toast" style="display:none">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+    <span id="toast-msg"></span>
+    <button id="toast-close">✕</button>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+phase: 1
+task: detection
+data:
+  root: data/processed
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+model:
+  backbone: cnn          # options: cnn | resnet18 | efficientnet_b0
+  pretrained: false
+  dropout: 0.4
+training:
+  epochs: 30
+  lr: 0.001
+  optimizer: adam
+  scheduler: cosine
+  early_stopping_patience: 7
+evaluation:
+  threshold: 0.5         # sigmoid threshold for binary prediction
+output:
+  checkpoint_dir: outputs/checkpoints/phase1
+  plot_dir: outputs/plots/phase1
+  report_dir: outputs/reports/phase1
